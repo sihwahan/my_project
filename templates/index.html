@@ -56,6 +56,48 @@
             alert("하단의 목록을 확인하세요.");
         }
 
+        $(document).ready(function () {
+            $("#orders-box").html("");
+            showStocks();
+        });
+
+        function showStocks() {
+            $('#orders-box').empty()
+
+            // 1. 리뷰 목록을 서버에 요청하기
+            $.ajax({
+                type: "GET",
+                url: "/finance_data",
+                data: {},
+                success: function (response) {
+                    // 2. 요청 성공 여부 확인하기
+                    if (response["result"] == "success") {
+                        let finance = response["finance"];
+                        // 3. 요청 성공했을 때 리뷰를 올바르게 화면에 나타내기
+                        for (let i = 0; i < finance.length; i++) {
+                            makeCard(
+                                finance[i]["stock"],
+                                finance[i]["pv"],
+                                finance[i]["mk_rank"],
+                                finance[i]["rate"]);
+                        }
+                    }
+                }
+            })
+        }
+
+        function makeCard(stock, pv, mk_rank, rate) {
+
+
+
+            let tempHtml = `<tr>
+                        <td>${stock}</td>
+                        <td>${pv}</td>
+                        <td>${mk_rank}</td>
+                        <td>${rate}</td>
+                    </tr>`;
+            $("#orders-box").append(tempHtml);
+        }
     </script>
 </head>
 <body>
@@ -63,7 +105,6 @@
     <div class="info">
         <h1>제목: 미정</h1>
         <p>사이트 용도 설명</p>
-
 
         <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -83,7 +124,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text"> 시가총액 순위 </label>
             </div>
-            <select class="custom-select" id="mk_capitalization">
+            <select class="custom-select" id="mk_rank">
                 <option selected value=""> 선택하세요 </option>
                 <option value="1">1-50</option>
                 <option value="2">51-100</option>
@@ -96,7 +137,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text"> 등락률 </label>
             </div>
-            <select class="custom-select" id="fluctuation_rate">
+            <select class="custom-select" id="rate">
                 <option selected value=""> 선택하세요 </option>
                 <option value="1"> ▲ </option>
                 <option value="2"> ▼ </option>
@@ -113,7 +154,7 @@
             <thead>
             <tr>
                 <th scope="col"> 종목이름 </th>
-                <th scope="col"> 현가 </th>
+                <th scope="col"> 현재가 </th>
                 <th scope="col"> 시가총액 순위 </th>
                 <th scope="col"> 등락률 </th>
 
